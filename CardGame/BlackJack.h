@@ -4,6 +4,9 @@
 #include "CardGame.h"
 
 class BlackJack : public CardGame {
+public:
+	void play() override;
+
 private:
 	void drawCard(std::vector<Card>& hand);
 	int getCardValue(const Card& card);
@@ -12,9 +15,6 @@ private:
 	void playInitialTurn(std::vector<Card>& playerHand, std::vector<Card>& dealerHand);
 	void playPlayerTurn(std::vector<Card>& playerHand);
 	void playDealerTurn(std::vector<Card>& dealerHand);
-
-public:
-    void play() override;
 };
 
 #endif // BLACKJACK_H

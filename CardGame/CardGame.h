@@ -5,15 +5,16 @@
 #include "Card.h"
 
 class CardGame {
-protected:
-    std::vector<Card> deck;
-
-    void createDeck();
-    void shuffleDeck();
-
 public:
     CardGame();
     virtual void play() = 0;
+
+protected:
+    std::vector<Card> deck;
+
+private:
+    void createDeck();
+    void shuffleDeck();
 };
 
 #endif // CARDGAME_H
