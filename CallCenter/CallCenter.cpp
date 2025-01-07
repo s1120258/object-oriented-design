@@ -1,79 +1,48 @@
 #include "CallCenter.h"
+#include "Employee.h"
+#include <iostream>
 
 CallCenter::CallCenter(const std::vector<Employee>& employees) : numWaitingCalls(0) {
 	for (const auto& employee : employees) {
-		switch (employee.getRole()) {
-			case Role::Respondent:
-				respondents.push(employee);
-				break;
-			case Role::Manager:
-				managers.push(employee);
-				break;
-			case Role::Director:
-				directors.push(employee);
-				break;
+		Role role = employee.getRole();
+		if (respondents.find(role) == respondents.end()) {
+			respondents[role] = std::queue<Employee>();
 		}
+		respondents[role].push(employee);
 	}
 }
 
 Employee* CallCenter::dispatchCall() {
-    if (!respondents.empty() && respondents.front().isAvailable()) {
-        Employee* employee = &respondents.front();
-        employee->setIsAvailable(false);
-        respondents.pop();
-		numWaitingCalls--;
-        return employee;
-    } else if (!managers.empty() && managers.front().isAvailable()) {
-        Employee* employee = &managers.front();
-        employee->setIsAvailable(false);
-        managers.pop();
-		numWaitingCalls--;
-        return employee;
-    } else if (!directors.empty() && directors.front().isAvailable()) {
-        Employee* employee = &directors.front();
-        employee->setIsAvailable(false);
-        directors.pop();
-		numWaitingCalls--;
-        return employee;
-    } else {
-        return nullptr; // No available employees
-    }
+	if (numWaitingCalls <= 0) {
+		std::cout << "No waiting calls" << std::endl;
+		return nullptr;
+	}
+
+	for (auto& [role, employees] : respondents) {
+		if (!employees.empty() && employees.front().isAvailable()) {
+			Employee* employee = &employees.front();
+			employee->setIsAvailable(false);
+			employees.pop();
+			numWaitingCalls--;
+			std::cout << "Call connected to employee ID: " << employee->getId() << std::endl;
+			return employee;
+		}
+	}
+
+	std::cout << "No available employees" << std::endl;
+	return nullptr;
 }
 
-void CallCenter::completeCall(Employee& respondent)
+void CallCenter::completeCall(Employee& employee)
 {
-	respondent.setIsAvailable(true);
-	switch (respondent.getRole()) {
-		case Role::Respondent:
-			respondents.push(respondent);
-			break;
-		case Role::Manager:
-			managers.push(respondent);
-			break;
-		case Role::Director:
-			directors.push(respondent);
-			break;
-	}
+	employee.setIsAvailable(true);
+	respondents[employee.getRole()].push(employee);
 }
 
 void CallCenter::addWaitingCall(int numCalls) {
 	numWaitingCalls += numCalls;
 }
 
-int CallCenter::getNumWaitingCalls() const {
-	return numWaitingCalls;
-}
-
-void CallCenter::addRespondent(const Employee& respondent) {
-	switch (respondent.getRole()) {
-	case Role::Respondent:
-		respondents.push(respondent);
-		break;
-	case Role::Manager:
-		managers.push(respondent);
-		break;
-	case Role::Director:
-		directors.push(respondent);
-		break;
-	}
+void CallCenter::addRespondent(const Employee& employee) {
+	respondents[employee.getRole()].push(employee);
 }

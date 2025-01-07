@@ -3,7 +3,10 @@
 
 #include <queue>
 #include <vector>
-#include "Employee.h"
+#include <map>
+#include "Role.h"
+
+class Employee;
 
 class CallCenter {
 public:
@@ -13,15 +16,10 @@ public:
     void completeCall(Employee& employee);
 
     void addWaitingCall(int numCalls = 1);
-	int getNumWaitingCalls() const;
-
     void addRespondent(const Employee& employee);
 
 private:
-	std::queue<Employee> respondents;
-    std::queue<Employee> managers;
-    std::queue<Employee> directors;
-
+	std::map<Role, std::queue<Employee>> respondents;
 	int numWaitingCalls;
 };
 

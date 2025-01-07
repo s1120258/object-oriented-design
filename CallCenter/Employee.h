@@ -1,11 +1,7 @@
 #ifndef EMPLOYEE_H
 #define EMPLOYEE_H
 
-enum class Role {
-    Respondent,
-    Manager,
-    Director
-};
+#include "Role.h"
 
 class Employee {
 public:
@@ -14,8 +10,8 @@ public:
     bool isAvailable() const;
     void setIsAvailable(bool availability);
 
-    Role getRole() const;
     int getId() const;
+    Role getRole() const;
 
 private:
     int id;

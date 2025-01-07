@@ -10,10 +10,10 @@ void Employee::setIsAvailable(bool availability) {
     this->availability = availability;
 }
 
-Role Employee::getRole() const {
-    return role;
-}
-
 int Employee::getId() const {
     return id;
+}
+
+Role Employee::getRole() const {
+    return role;
 }
