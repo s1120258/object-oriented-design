@@ -1,13 +1,13 @@
 #include "Employee.h"
 
-Employee::Employee(int id, Role role) : id(id), role(role), available(true) {}
+Employee::Employee(int id, Role role) : id(id), role(role), availability(true) {}
 
 bool Employee::isAvailable() const {
-    return available;
+    return availability;
 }
 
 void Employee::setIsAvailable(bool availability) {
-    available = availability;
+    this->availability = availability;
 }
 
 Role Employee::getRole() const {

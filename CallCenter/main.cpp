@@ -1,54 +1,41 @@
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include "Employee.h"
 #include "CallCenter.h"
 
 namespace {
-    const int NUM_RESPONDENTS = 1;
-    const int NUM_MANAGERS = 4;
-    const int NUM_DIRECTORS = 2;
+	static int employeeId = 1;
 
-	void registerEmployee(std::vector<Employee>& employees, Role role, int& id) {
-		int numEmployees = 0;
-		switch (role) {
-			case Role::Respondent:
-				numEmployees = NUM_RESPONDENTS;
-				break;
-			case Role::Manager:
-				numEmployees = NUM_MANAGERS;
-				break;
-			case Role::Director:
-				numEmployees = NUM_DIRECTORS;
-				break;
+	void registerEmployees(const std::unordered_map <Role, int>& numEmployeesMap, std::vector<Employee>& employees) {
+		for (const auto& [role, numEmployees] : numEmployeesMap) {
+			for (int i = 0; i < numEmployees; i++) {
+				employees.push_back(Employee(employeeId++, role));
+			}
 		}
-
-		for (int i = 0; i < numEmployees; i++) {
-			employees.push_back(Employee(id++, role));
-		}
-	}
-
-	void registerEmployees(std::vector<Employee>& respondents, std::vector<Employee> managers, std::vector<Employee> directors) {
-		int id = 1;
-		registerEmployee(respondents, Role::Respondent, id);
-		registerEmployee(managers, Role::Manager, id);
-		registerEmployee(directors, Role::Director, id);
 	}
 }
 
 int main() {
-    std::vector<Employee> respondents;
-    std::vector<Employee> managers;
-    std::vector<Employee> directors;
-	registerEmployees(respondents, managers, directors);
+	const int NUM_RESPONDENTS = 10;
+	const int NUM_MANAGERS = 4;
+	const int NUM_DIRECTORS = 2;
 
-    CallCenter callCenter(respondents, managers, directors);
+	std::unordered_map <Role, int> numEmployeesMap = { { Role::Respondent, NUM_RESPONDENTS }, { Role::Manager, NUM_MANAGERS }, { Role::Director, NUM_DIRECTORS } };
+    std::vector<Employee> employees;
+	registerEmployees(numEmployeesMap, employees);
 
-    Employee* employee = callCenter.dispatchCall();
-    if (employee) {
-        std::cout << "Call connected to employee ID: " << employee->getId() << std::endl;
-    } else {
-        std::cout << "No available employees to take the call." << std::endl;
-    }
+    CallCenter callCenter(employees);
+
+	callCenter.addWaitingCall();
+	if (callCenter.getNumWaitingCalls() > 0) {
+		Employee* employee = callCenter.dispatchCall();
+		if (employee) {
+			std::cout << "Call connected to employee ID: " << employee->getId() << std::endl;
+		} else {
+			std::cout << "No available employees to take the call." << std::endl;
+		}
+	}
 
     return 0;
 }

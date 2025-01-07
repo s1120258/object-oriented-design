@@ -1,14 +1,18 @@
 #include "CallCenter.h"
 
-CallCenter::CallCenter(const std::vector<Employee>& respondents, const std::vector<Employee>& managers, const std::vector<Employee>& directors) : numWaitingCalls(0) {
-	for (const auto& respondent : respondents) {
-		this->respondents.push(respondent);
-	}
-	for (const auto& manager : managers) {
-		this->managers.push(manager);
-	}
-	for (const auto& director : directors) {
-		this->directors.push(director);
+CallCenter::CallCenter(const std::vector<Employee>& employees) : numWaitingCalls(0) {
+	for (const auto& employee : employees) {
+		switch (employee.getRole()) {
+			case Role::Respondent:
+				respondents.push(employee);
+				break;
+			case Role::Manager:
+				managers.push(employee);
+				break;
+			case Role::Director:
+				directors.push(employee);
+				break;
+		}
 	}
 }
 
@@ -17,24 +21,26 @@ Employee* CallCenter::dispatchCall() {
         Employee* employee = &respondents.front();
         employee->setIsAvailable(false);
         respondents.pop();
+		numWaitingCalls--;
         return employee;
     } else if (!managers.empty() && managers.front().isAvailable()) {
         Employee* employee = &managers.front();
         employee->setIsAvailable(false);
         managers.pop();
+		numWaitingCalls--;
         return employee;
     } else if (!directors.empty() && directors.front().isAvailable()) {
         Employee* employee = &directors.front();
         employee->setIsAvailable(false);
         directors.pop();
+		numWaitingCalls--;
         return employee;
     } else {
-		numWaitingCalls++;
         return nullptr; // No available employees
     }
 }
 
-void CallCenter::completedCall(Employee& respondent)
+void CallCenter::completeCall(Employee& respondent)
 {
 	respondent.setIsAvailable(true);
 	switch (respondent.getRole()) {
@@ -48,6 +54,14 @@ void CallCenter::completedCall(Employee& respondent)
 			directors.push(respondent);
 			break;
 	}
+}
+
+void CallCenter::addWaitingCall(int numCalls) {
+	numWaitingCalls += numCalls;
+}
+
+int CallCenter::getNumWaitingCalls() const {
+	return numWaitingCalls;
 }
 
 void CallCenter::addRespondent(const Employee& respondent) {

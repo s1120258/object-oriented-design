@@ -20,7 +20,7 @@ public:
 private:
     int id;
     Role role;
-    bool available;
+    bool availability;
 };
 
 #endif // EMPLOYEE_H

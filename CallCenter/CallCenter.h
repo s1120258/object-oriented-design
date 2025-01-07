@@ -7,11 +7,15 @@
 
 class CallCenter {
 public:
-    CallCenter(const std::vector<Employee>& respondents, const std::vector<Employee>& managers, const std::vector<Employee>& directors);
+    CallCenter(const std::vector<Employee>& employees);
 
     Employee* dispatchCall();
-    void completedCall(Employee& employee);
-    void addRespondent(const Employee& respondent);
+    void completeCall(Employee& employee);
+
+    void addWaitingCall(int numCalls = 1);
+	int getNumWaitingCalls() const;
+
+    void addRespondent(const Employee& employee);
 
 private:
 	std::queue<Employee> respondents;
